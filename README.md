@@ -1,8 +1,8 @@
 # qichacha
 qichacha spider
 
-#run
+# run
 scrapy crawl qichacha_spider 
 
-#tips
+# tips
 爬去太快可能被封账号
