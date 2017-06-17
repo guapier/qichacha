@@ -19,7 +19,7 @@ NEWSPIDER_MODULE = 'qichacha.spiders'
 USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36'
 
 # Obey robots.txt rules
-ROBOTSTXT_OBEY = True
+ROBOTSTXT_OBEY = False
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 #CONCURRENT_REQUESTS = 32
@@ -27,7 +27,7 @@ ROBOTSTXT_OBEY = True
 # Configure a delay for requests for the same website (default: 0)
 # See http://scrapy.readthedocs.org/en/latest/topics/settings.html#download-delay
 # See also autothrottle settings and docs
-DOWNLOAD_DELAY = 1
+DOWNLOAD_DELAY = 5
 # The download delay setting will honor only one of:
 #CONCURRENT_REQUESTS_PER_DOMAIN = 16
 #CONCURRENT_REQUESTS_PER_IP = 16
@@ -61,10 +61,10 @@ DEFAULT_REQUEST_HEADERS = {
 #DOWNLOADER_MIDDLEWARES = {
 #    'qichacha.middlewares.MyCustomDownloaderMiddleware': 543,
 #}
-DOWNLOADER_MIDDLEWARES = {
-    'qichacha.middlewares.ProxyMiddleware': 543,
-
-}
+# DOWNLOADER_MIDDLEWARES = {
+#     'qichacha.middlewares.ProxyMiddleware': 543,
+#
+# }
 
 # Enable or disable extensions
 # See http://scrapy.readthedocs.org/en/latest/topics/extensions.html
@@ -77,7 +77,8 @@ DOWNLOADER_MIDDLEWARES = {
 #ITEM_PIPELINES = {
 #    'qichacha.pipelines.QichachaPipeline': 300,
 #}
-
+FEED_EXPORT_ENCODING = 'utf-8'
+FEED_EXPORT_FIELDS = ["company_id", "company_name","lawman", "cellphone","email","registered_capital","address","industry","scope_business","unique_social_credit_code","register_number","organization_code","business_status","company_type","publish_time","business_limit","registration_authority","approved_time","english_name","former_name","company_address"]
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See http://doc.scrapy.org/en/latest/topics/autothrottle.html
 #AUTOTHROTTLE_ENABLED = True

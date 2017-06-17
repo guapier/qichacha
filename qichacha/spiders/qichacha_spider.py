@@ -18,22 +18,25 @@ class QichachaSpiderSpider(scrapy.Spider):
   'Host':'www.qichacha.com',
   'Referer':'http://www.qichacha.com/search?key=%E5%89%8D%E6%B5%B7',
   'User-Agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36',
-  'Cookie':'acw_tc=AQAAAMClKWW7Aw4AA4YOtzlzZwkPcQLk; gr_user_id=902c1daf-8f80-4029-9fa8-c592b8892ee0; _uab_collina=149699319138946038350234; UM_distinctid=15c8bbf57c70-011db702092652-3060750a-fa000-15c8bbf57d07; _umdata=70CF403AFFD707DFE7A81215053B1F94125B615566D35889A27BFF2A817CA2240D48C18462499BD5CD43AD3E795C914C137F70B75F790126A4488D143A0E7980; PHPSESSID=k2ngn9tqd3qmacmunak7404p67; CNZZDATA1254842228=1797299873-1496988018-null%7C1497063794',
+  'Cookie':'acw_tc=AQAAAJ1uU3vRhQQACIcOt012zWDujE8d; UM_distinctid=15c9f23d48135d-0d8140e46df443-3060750a-fa000-15c9f23d482325; gr_user_id=5ef7ada5-8a36-44ab-8af8-2a7eb4ad115b; _uab_collina=149731855315858997004827; _umdata=65F7F3A2F63DF0204721448F93C15CABF74B25C04A9EE9F41C544C06EFCF3E831B12EC846B921728CD43AD3E795C914C8F1C1071E5896183D7B6F3055C41504D; PHPSESSID=a5qogqindhh7mrfiq4o3324s15; gr_session_id_9c1eb7420511f8b2=582613d0-d812-4f72-bd60-9feeb86a07b9; CNZZDATA1254842228=2054185072-1497317697-null%7C1497420340',
 
 
 }
     allowed_domains = ["qichacha.com"]
-    start_urls = ['http://www.qichacha.com/search?key=%E5%89%8D%E6%B5%B7%E4%BC%81%E4%BF%9D%E7%A7%91%E6%8A%80']
+    #start_urls = ['http://www.qichacha.com/search?key=%E5%89%8D%E6%B5%B7%E4%BC%81%E4%BF%9D%E7%A7%91%E6%8A%80']
     # csv_reader = csv.reader(open('./company.csv'))
     # for row in csv_reader:
     #     start_urls.append('http://www.qichacha.com/search?key='+row[0])
+    def start_requests(self):
+        with open(getattr(self, "file", "company.csv"), "rU") as f:
+            reader = csv.reader(f)
+            for line in reader:
+                request = Request('http://www.qichacha.com/search?key='+line[0].decode('utf-8').encode('utf-8'),headers=self.headers)
+                #request.meta['fields'] = line
+                yield request
+
     # def start_requests(self):
-    #     with open(getattr(self, "file", "company.csv"), "rU") as f:
-    #         reader = csv.reader(f)
-    #         for line in reader:
-    #             request = Request('http://www.qichacha.com/search?key='+line[0].decode('utf-8').encode('utf-8'),headers=self.headers,callback=self.parse)
-    #             #request.meta['fields'] = line
-    #             yield request
+    #     yield Request('http://www.qichacha.com/search?key=%E5%89%8D%E6%B5%B7%E4%BA%BA%E5%AF%BF%E4%BF%9D%E9%99%A9%E8%82%A1%E4%BB%BD%E6%9C%89%E9%99%90%E5%85%AC%E5%8F%B8',headers=self.headers)
 
     def parse(self, response):
         item=QichachaItem()
@@ -56,25 +59,26 @@ class QichachaSpiderSpider(scrapy.Spider):
         _cellphone=response.css('small.ma_line2::text').extract_first("")
         _email = response.css('small.ma_line2 a::text').extract_first("")
         address=response.css('small.ma_line3::text').extract_first().strip()
-        if(_cellphone==''):
+        if(_cellphone and _cellphone.strip()==''):
             cellphone='暂无'
         else:
-            result = re.match('.*?(0\d{3}-\d{8}).*', _cellphone)
+            result = re.match('.*?((0\d{3}-\d{8})|(^1[3,4,5,8]\d{9})).*', _cellphone)
             if result:
                 cellphone=result.group(1)
             else:
                 cellphone=_cellphone
 
 
-        if (_email == ''):
+        if (_email and _email.strip() == ''):
             email = '暂无'
         else:
-            result=re.match('.*?(\\w+@(\\w+.)+[a-z]{2,3}).*',_email)
+            result=re.match('.*?(\w+@(\w+.)+[a-z]{2,3}).*',_email)
             if result:
                 email = result.group(1)
             else:
                 email = _email
         item['company_name']=company_name
+        item['cellphone']=cellphone
         item['email']=email
         item['address']=address
         base_info_url='http://www.qichacha.com/company_getinfos?unique={0}&companyname={1}&tab=base'
