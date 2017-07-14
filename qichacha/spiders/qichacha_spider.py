@@ -18,7 +18,7 @@ class QichachaSpiderSpider(scrapy.Spider):
   'Host':'www.qichacha.com',
   'Referer':'http://www.qichacha.com/search?key=%E5%89%8D%E6%B5%B7',
   'User-Agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36',
-  'Cookie':'acw_tc=AQAAAJ1uU3vRhQQACIcOt012zWDujE8d; UM_distinctid=15c9f23d48135d-0d8140e46df443-3060750a-fa000-15c9f23d482325; gr_user_id=5ef7ada5-8a36-44ab-8af8-2a7eb4ad115b; _uab_collina=149731855315858997004827; _umdata=65F7F3A2F63DF0204721448F93C15CABF74B25C04A9EE9F41C544C06EFCF3E831B12EC846B921728CD43AD3E795C914C8F1C1071E5896183D7B6F3055C41504D; PHPSESSID=a5qogqindhh7mrfiq4o3324s15; gr_session_id_9c1eb7420511f8b2=582613d0-d812-4f72-bd60-9feeb86a07b9; CNZZDATA1254842228=2054185072-1497317697-null%7C1497420340',
+  'Cookie':'acw_tc=AQAAAH9a5jrnJwEAlh8Otwrltqp2M0uZ; UM_distinctid=15d3b3ecd43c0a-0cb34ba7f921cb-474a0521-140000-15d3b3ecd4495a; hasShow=1; _uab_collina=149993755806215945389267; gr_user_id=7f6c054b-29b5-4fdf-8aef-7b9147408511; _umdata=E2AE90FA4E0E42DE5781CCF86806B4F5E78B1864E8942C6AFE8A955D217A8CF6BB6D2AFA99568EF5CD43AD3E795C914C01C5561BBF94ECE85D0F020B0B81CC82; PHPSESSID=mpkt3jjq1ukh6rn26bmuv22u07; gr_session_id_9c1eb7420511f8b2=5b2f9c02-0014-4761-9ac1-a6a827cb812f; CNZZDATA1254842228=762928867-1499932830-%7C1499932830',
 
 
 }
@@ -28,10 +28,16 @@ class QichachaSpiderSpider(scrapy.Spider):
     # for row in csv_reader:
     #     start_urls.append('http://www.qichacha.com/search?key='+row[0])
     def start_requests(self):
-        with open(getattr(self, "file", "company.csv"), "rU") as f:
+        # with open(getattr(self, "file", "company.csv"), "rU") as f:
+        #     reader = csv.reader(f)
+        #     for line in reader:
+        #         request = Request('http://www.qichacha.com/search?key='+line[0].decode('gbk').encode('utf-8'),headers=self.headers)
+        #         #request.meta['fields'] = line
+        #         yield request
+        with open(("company.csv"), "rU") as f:
             reader = csv.reader(f)
             for line in reader:
-                request = Request('http://www.qichacha.com/search?key='+line[0].decode('utf-8').encode('utf-8'),headers=self.headers)
+                request = Request('http://www.qichacha.com/search?key='+line[0],headers=self.headers)
                 #request.meta['fields'] = line
                 yield request
 
@@ -48,14 +54,13 @@ class QichachaSpiderSpider(scrapy.Spider):
                 company_id=match_obj.group(1)
             item['company_id']=company_id
             item['company_url']=company_url
-            print(type(company_url))
             request= scrapy.Request(company_url, headers=self.headers,callback=self.parse_basecontent)
             request.meta['item']=item
             yield request
 
     def parse_basecontent(self,response):
         item=response.meta['item']
-        company_name=response.css('span.text-big.font-bold::text').extract_first("")
+        company_name=response.css('div.company-top-name::text').extract_first("")
         _cellphone=response.css('small.ma_line2::text').extract_first("")
         _email = response.css('small.ma_line2 a::text').extract_first("")
         address=response.css('small.ma_line3::text').extract_first().strip()
