@@ -31,7 +31,7 @@ class QichachaSpiderSpider(scrapy.Spider):
         with open(getattr(self, "file", "company.csv"), "rU") as f:
             reader = csv.reader(f)
             for line in reader:
-                request = Request('http://www.qichacha.com/search?key='+line[0].decode('utf-8').encode('utf-8'),headers=self.headers)
+                request = Request('http://www.qichacha.com/search?key='+line[0],headers=self.headers)
                 #request.meta['fields'] = line
                 yield request
 
