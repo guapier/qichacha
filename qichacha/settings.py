@@ -27,7 +27,7 @@ ROBOTSTXT_OBEY = False
 # Configure a delay for requests for the same website (default: 0)
 # See http://scrapy.readthedocs.org/en/latest/topics/settings.html#download-delay
 # See also autothrottle settings and docs
-DOWNLOAD_DELAY = 3
+DOWNLOAD_DELAY = 2
 # The download delay setting will honor only one of:
 #CONCURRENT_REQUESTS_PER_DOMAIN = 16
 #CONCURRENT_REQUESTS_PER_IP = 16
@@ -78,7 +78,7 @@ DEFAULT_REQUEST_HEADERS = {
 #    'qichacha.pipelines.QichachaPipeline': 300,
 #}
 FEED_EXPORT_ENCODING = 'utf-8'
-FEED_EXPORT_FIELDS = ["company_id", "company_name","lawman", "cellphone","email","registered_capital","address","industry","scope_business","unique_social_credit_code","register_number","organization_code","business_status","company_type","publish_time","business_limit","registration_authority","approved_time","english_name","former_name","company_address"]
+FEED_EXPORT_FIELDS = ["company_id", "company_name","lawman", "phone","email","register_capital","address","business_scope","unique_social_code","register_number","company_status","company_type","created_date","business_limit"]
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See http://doc.scrapy.org/en/latest/topics/autothrottle.html
 #AUTOTHROTTLE_ENABLED = True
